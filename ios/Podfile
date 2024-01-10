@@ -24,16 +24,17 @@ prepare_react_native_project!
 #   }
 # }
 # ```
-flipper_config = FlipperConfiguration.disabled
+ENV['NO_FLIPPER'] = '0'
+flipper_config = FlipperConfiguration.enabled
 if ENV['NO_FLIPPER'] == '1' then
   # Explicitly disabled through environment variables
   flipper_config = FlipperConfiguration.disabled
 elsif podfile_properties.key?('ios.flipper') then
   # Configure Flipper in Podfile.properties.json
   if podfile_properties['ios.flipper'] == 'true' then
-    flipper_config = FlipperConfiguration.enabled(["Debug", "Release"])
+    flipper_config = FlipperConfiguration.enabled(["Debug", "Release"], { 'Flipper' => '0.239.0' })
   elsif podfile_properties['ios.flipper'] != 'false' then
-    flipper_config = FlipperConfiguration.enabled(["Debug", "Release"], { 'Flipper' => podfile_properties['ios.flipper'] })
+    flipper_config = FlipperConfiguration.enabled(["Debug", "Release"], { 'Flipper' => '0.239.0' })
   end
 end
 
@@ -78,6 +79,11 @@ target 'glview' do
   end
 
   post_integrate do |installer|
+    begin
+      expo_patch_react_imports!(installer)
+    rescue => e
+      Pod::UI.warn e
+    end
     begin
       expo_patch_react_imports!(installer)
     rescue => e
