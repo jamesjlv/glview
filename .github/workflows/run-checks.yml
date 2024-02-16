@@ -1,0 +1,89 @@
+name: Run checks
+
+on:
+  pull_request:
+    branches:
+      - development
+
+jobs:
+  run_checks:
+    name: Run checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      
+      - uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: '-----BEGIN RSA PRIVATE KEY-----
+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
+-----END RSA PRIVATE KEY-----
+
+'
+
+      - name: Check the branch name
+        uses: duart38/branch-convention-check@v2.1.0
+        with:
+          standard_branch_check: '^(feature\/)(\w|\d|-)+([a-zA-Z]|[0-9])$'
+          ignore: 'main,development'
+
+      - name: Install app dependencies
+        run: yarn --prefer-offline
+
+      - name: Run eslint on changed files
+        uses: tj-actions/eslint-changed-files@v18.3.1
+        with:
+          config_path: './.eslintrc.cjs'
+          extra_args: --fix
